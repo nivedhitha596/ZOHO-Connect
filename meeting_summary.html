@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Summary</title>
+  <style>
+    /* Background with gradient */
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(90deg, #1e3c72, #2a5298);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    /* Container Card */
+    .container {
+      max-width: 650px;
+      margin: 40px auto;
+      padding: 25px 30px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 24px;
+      background: linear-gradient(90deg, #43a047, #66bb6a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      margin: 12px 0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    p b {
+      color: #444;
+    }
+
+    /* Back button */
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #43a047, #66bb6a);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover {
+      background: linear-gradient(135deg, #2e7d32, #388e3c);
+      transform: scale(1.05);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    }
+
+    /* Fade-in animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Meeting Summary</h1>
+  </header>
+
+  <div class="container" id="summaryContainer">
+    <!-- Summary will be displayed here -->
+  </div>
+
+  <script>
+    // Redirect to login if not logged in
+    if(!localStorage.getItem("loggedInUser")){
+      window.location.href = "index.html";
+    }
+
+    const container = document.getElementById("summaryContainer");
+    const meeting = JSON.parse(localStorage.getItem("meetingSummary"));
+
+    if(meeting){
+      container.innerHTML = `
+        <h2>${meeting.title}</h2>
+        <p><b>Agenda:</b> ${meeting.agenda}</p>
+        <p><b>Date:</b> ${meeting.date} at ${meeting.time}</p>
+        <p><b>Participants:</b> ${meeting.participants.join(", ")}</p>
+        <p><b>Notes:</b> ${meeting.notes}</p>
+        <p><b>Summary:</b> ${meeting.summary}</p>
+        <a href="past.html" class="back-btn">← Back to Past Meetings</a>
+      `;
+    } else {
+      container.innerHTML = `
+        <p>No meeting selected.</p>
+        <a href="past.html" class="back-btn">← Back</a>
+      `;
+    }
+  </script>
+</body>
+</html>

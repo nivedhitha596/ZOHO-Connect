@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZOHO Connect</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* Background */
+body { 
+  margin: 0; padding: 0;
+  font-family: 'Roboto Mono', monospace;
+  background: url('https://i.pinimg.com/1200x/e8/bc/5c/e8bc5c470c98afc13e0d6181bb2873a7.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+body::before {
+  content: '';
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background-color: rgba(255,255,255,0.6);
+  z-index: -1;
+}
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #1e88e5, #43a047);
+  color: white;
+  padding: 25px;
+  text-align: center;
+  position: relative;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 36px;
+  font-weight: bold;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+header button {
+  position: absolute;
+  right: 20px; top: 25px;
+  background: white; color: #1e88e5;
+  border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;
+  font-weight: bold; font-family: 'Roboto Mono', monospace;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+header button:hover { background: #f0f0f0; }
+
+/* Reminder Icon */
+.reminder-icon {
+  position: fixed;
+  top: 20px; left: 20px;
+  background: #ffeb3b; color: #f57f17;
+  width: 60px; height: 60px;
+  border-radius: 50%; display: flex;
+  justify-content: center; align-items: center;
+  font-size: 26px; cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: 0.3s;
+  z-index: 10;
+}
+.reminder-icon:hover { transform: scale(1.2); }
+
+/* Slideshow */
+.slideshow-container {
+  max-width: 700px; margin: 20px auto; position: relative;
+  overflow: hidden; border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, #ff8a65, #ffb74d); 
+  color: white; font-weight: bold;
+  height: 130px; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; text-align: center; padding: 20px;
+}
+.slide { display: none; }
+
+/* Vertical Cards */
+.container { 
+  display: flex; flex-direction: column;
+  align-items: center; margin: 30px 10px; gap: 30px;
+}
+.card { 
+  width: 95%; max-width: 500px; height: 300px;
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+  cursor: pointer; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  transition: 0.3s;
+  color: white; text-align: center;
+  font-family: 'Roboto Mono', monospace;
+}
+.card:hover { transform: scale(1.05); box-shadow: 0 16px 30px rgba(0,0,0,0.35); }
+.card h2 { margin: 0; font-size: 28px; text-shadow: 2px 2px 5px rgba(0,0,0,0.7); }
+.card p { margin-top: 10px; font-size: 18px; text-shadow: 1px 1px 5px rgba(0,0,0,0.7); }
+/* Overlay for readability */
+.card::before {
+  content: '';
+  position: absolute; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.35);
+  z-index: 1;
+}
+.card-content { position: relative; z-index: 2; }
+
+/* Individual Card Images */
+#scheduleCard { background: url('https://images.unsplash.com/photo-1581091870626-0e94b5b7318c?auto=format&fit=crop&w=800&q=80') center/cover no-repeat; }
+#upcomingCard { background: url('https://images.unsplash.com/photo-1564869737741-2b3b43e391f0?auto=format&fit=crop&w=800&q=80') center/cover no-repeat; }
+#pastCard { background: url('https://images.unsplash.com/photo-1581092339590-26a5df0b01e5?auto=format&fit=crop&w=800&q=80') center/cover no-repeat; }
+
+/* Chatbot Tab */
+.chatbot-tab {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1daf4e; color: white;
+  padding: 10px 15px; border-radius: 20px;
+  cursor: pointer; font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+.chatbot-tab:hover { background: #15964a; }
+
+/* Chatbot Window */
+.chatbot {
+  display: none; position: fixed; bottom: 60px; right: 20px;
+  width: 300px; background: white;
+  border: 1px solid #ddd; border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+.chatbot-header { background: #1e3993; color: white; padding: 10px; border-radius: 10px 10px 0 0; }
+.chatbot-messages { height: 200px; overflow-y: auto; padding: 10px; font-size: 14px; font-family: 'Roboto Mono', monospace; }
+.chatbot-input { display: flex; border-top: 1px solid #ddd; }
+.chatbot-input input { flex: 1; padding: 8px; border: none; outline: none; font-family: 'Roboto Mono', monospace; }
+.chatbot-input button { background: #1daf4e; color: white; border: none; padding: 8px 12px; cursor: pointer; font-family: 'Roboto Mono', monospace; }
+</style>
+</head>
+<body>
+
+<header>
+  ZOHO Connect
+  <button onclick="logout()">Logout</button>
+</header>
+
+<div class="reminder-icon" id="reminderIcon" title="Upcoming Meeting">🔔</div>
+
+<div class="slideshow-container">
+  <div class="slide">Welcome to Zoho Connect! Manage your meetings efficiently.</div>
+  <div class="slide">Plan, track, and review all meetings in one place.</div>
+  <div class="slide">Use the chat assistant to get quick info about your meetings.</div>
+</div>
+
+<div class="container">
+  <div class="card" id="scheduleCard" onclick="window.location.href='schedule.html'">
+    <div class="card-content">
+      <h2>Schedule Meeting</h2>
+      <p>Plan a new meeting with your team</p>
+    </div>
+  </div>
+  <div class="card" id="upcomingCard" onclick="window.location.href='upcoming.html'">
+    <div class="card-content">
+      <h2>Upcoming Meetings</h2>
+      <p>See what’s ahead in your calendar</p>
+    </div>
+  </div>
+  <div class="card" id="pastCard" onclick="window.location.href='past.html'">
+    <div class="card-content">
+      <h2>Past Meetings</h2>
+      <p>Review history and meeting summaries</p>
+    </div>
+  </div>
+</div>
+
+<div class="chatbot-tab" onclick="toggleChat()">Chat</div>
+<div class="chatbot" id="chatWindow">
+  <div class="chatbot-header">Meeting Assistant</div>
+  <div class="chatbot-messages" id="chatMessages"></div>
+  <div class="chatbot-input">
+    <input type="text" id="chatInput" placeholder="Ask about meetings...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+// Redirect if not logged in
+if(!localStorage.getItem("loggedInUser")) window.location.href = "index.html";
+
+// Sample meetings data
+const meetings = JSON.parse(localStorage.getItem("meetings") || "[]");
+
+// Slideshow
+let slideIndex = 0;
+const slides = document.querySelectorAll(".slide");
+function showSlides() {
+  slides.forEach(s => s.style.display = "none");
+  slideIndex = (slideIndex+1) % slides.length;
+  slides[slideIndex].style.display = "block";
+  setTimeout(showSlides, 4000);
+}
+showSlides();
+
+// Chatbot toggle
+function toggleChat(){
+  const chat = document.getElementById("chatWindow");
+  chat.style.display = chat.style.display==="block" ? "none" : "block";
+}
+
+function sendMessage(){
+  let input = document.getElementById("chatInput");
+  let msg = input.value.trim();
+  if(msg==="") return;
+  let chatBox = document.getElementById("chatMessages");
+  chatBox.innerHTML += `<p><b>You:</b> ${msg}</p>`;
+  let reply = "Sorry, I don’t understand.";
+  const nextMeeting = meetings.find(m => m.type==="upcoming");
+  if(msg.toLowerCase().includes("upcoming")) reply = nextMeeting ? `Next meeting: ${nextMeeting.date} ${nextMeeting.time} - ${nextMeeting.agenda}` : "No upcoming meetings.";
+  if(msg.toLowerCase().includes("past")) reply = meetings.find(m=>m.type==="past") ? `Last meeting: ${meetings.find(m=>m.type==="past").date} - ${meetings.find(m=>m.type==="past").agenda}` : "No past meetings.";
+  if(msg.toLowerCase().includes("schedule")) reply = "Click the 'Schedule Meeting' card to add a new one.";
+  chatBox.innerHTML += `<p><b>Bot:</b> ${reply}</p>`;
+  input.value = "";
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Logout
+function logout(){
+  localStorage.removeItem("loggedInUser");
+  window.location.href="index.html";
+}
+
+// Reminder Icon Popup
+const reminderIcon = document.getElementById("reminderIcon");
+reminderIcon.addEventListener("click", () => {
+  const nextMeeting = meetings.find(m => m.type==="upcoming");
+  const meetingInfo = nextMeeting 
+      ? `<h3 style="margin:0 0 10px 0;color:#1e3c72;">Upcoming Meeting</h3>
+         <p><b>Title:</b> ${nextMeeting.title}</p>
+         <p><b>Agenda:</b> ${nextMeeting.agenda}</p>
+         <p><b>Date:</b> ${nextMeeting.date} at ${nextMeeting.time}</p>
+         <p><b>Participants:</b> ${nextMeeting.participants.join(", ")}</p>`
+      : `<h3 style="margin:0 0 10px 0;color:#e53935;">No Upcoming Meeting</h3>`;
+
+  const popup = window.open(
+    "",
+    "Reminder",
+    "width=350,height=250,top=200,left=500,resizable=no,scrollbars=no"
+  );
+
+  popup.document.write(`
+    <html>
+      <head>
+        <title>Upcoming Meeting</title>
+        <style>
+          body {
+            font-family: 'Roboto Mono', monospace;
+            margin: 0; padding: 20px;
+            background: linear-gradient(135deg,#43a047,#1e88e5);
+            color: white;
+            text-align: left;
+            border-radius: 10px;
+          }
+          h3 { margin-bottom: 10px; }
+          p { margin: 5px 0; font-size: 14px; }
+          button {
+            margin-top: 15px; padding: 8px 12px;
+            background: #fbc02d; color: #1e3c72;
+            border: none; border-radius: 6px;
+            cursor: pointer; font-weight: bold;
+          }
+          button:hover { background: #f9a825; }
+        </style>
+      </head>
+      <body>
+        ${meetingInfo}
+        <button onclick="window.close()">Close</button>
+      </body>
+    </html>
+  `);
+
+  popup.focus();
+});
+</script>
+</body>
+</html>

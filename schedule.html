@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule Meeting</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      padding: 40px;
+      margin: 0;
+    }
+
+    .box {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      max-width: 480px;
+      margin: auto;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 26px;
+      background: linear-gradient(90deg, #1e3c72, #2a5298);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    select, textarea, input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    select:focus, textarea:focus, input:focus {
+      border-color: #1e88e5;
+      box-shadow: 0 0 8px rgba(30,136,229,0.3);
+      outline: none;
+    }
+
+    textarea {
+      resize: none;
+      height: 80px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #1e88e5, #42a5f5);
+      color: white;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold; /* FIXED */
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #1565c0, #1e88e5);
+    }
+
+    .disabled-section {
+      opacity: 0.6;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Schedule a Meeting</h2>
+    <form id="scheduleForm">
+      <label>Select a Slot:</label>
+      <select id="slot" required>
+        <option value="">-- Choose an available slot --</option>
+        <option value="2025-09-29|10:00 AM">Sept 29, 2025 - 10:00 AM</option>
+        <option value="2025-09-29|03:00 PM">Sept 29, 2025 - 03:00 PM</option>
+        <option value="2025-09-30|11:00 AM">Sept 30, 2025 - 11:00 AM</option>
+        <option value="2025-09-30|04:00 PM">Sept 30, 2025 - 04:00 PM</option>
+      </select>
+
+      <div id="detailsSection" class="disabled-section">
+        <label>Participants:</label>
+        <select id="participants" disabled>
+          <option>Team A</option>
+          <option>Team B</option>
+          <option>Clients</option>
+          <option>Management</option>
+        </select>
+
+        <label>Agenda:</label>
+        <textarea id="agenda" required disabled></textarea>
+
+        <label>Meeting Time Limit (in minutes):</label>
+        <input type="number" id="timeLimit" min="15" step="15" placeholder="e.g. 30" required disabled>
+      </div>
+
+      <button type="submit">Schedule</button>
+    </form>
+  </div>
+
+  <script>
+    if(!localStorage.getItem("loggedInUser")) window.location.href = "index.html";
+
+    const slotDropdown = document.getElementById("slot");
+    const detailsSection = document.getElementById("detailsSection");
+    const participants = document.getElementById("participants");
+    const agenda = document.getElementById("agenda");
+    const timeLimit = document.getElementById("timeLimit");
+
+    slotDropdown.addEventListener("change", () => {
+      if(slotDropdown.value) {
+        detailsSection.classList.remove("disabled-section");
+        participants.disabled = false;
+        agenda.disabled = false;
+        timeLimit.disabled = false;
+      } else {
+        detailsSection.classList.add("disabled-section");
+        participants.disabled = true;
+        agenda.disabled = true;
+        timeLimit.disabled = true;
+      }
+    });
+
+    document.getElementById("scheduleForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const slotValue = slotDropdown.value;
+      if(!slotValue) {
+        alert("Please select a slot first!");
+        return;
+      }
+      let [date, time] = slotValue.split("|");
+
+      let meetings = JSON.parse(localStorage.getItem("meetings")) || [];
+      meetings.push({
+        type: "upcoming",
+        date: date,
+        time: time,
+        participants: participants.value,
+        agenda: agenda.value,
+        timeLimit: timeLimit.value
+      });
+      localStorage.setItem("meetings", JSON.stringify(meetings));
+      alert("Meeting scheduled successfully!");
+      window.location.href = "upcoming.html";
+    });
+  </script>
+</body>
+</html>
