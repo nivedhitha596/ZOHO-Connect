@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upcoming Meetings</title>
+  <style>
+    /* Background with gradient */
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(90deg, #1e3c72, #2a5298);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+
+    /* Main container */
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* Meeting cards */
+    .meeting {
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 20px;
+      background: white;
+      border-left: 8px solid #fbc02d;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      cursor: default; /* non-clickable cursor */
+      transition: transform 0.2s, box-shadow 0.3s;
+      animation: fadeIn 0.6s ease-in-out;
+      align-items: flex-start;
+    }
+
+    .meeting:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    /* Icon style */
+    .icon {
+      font-size: 36px;
+      color: #fbc02d;
+      margin-top: 4px;
+      width: 56px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* Meeting details */
+    .meeting-details {
+      flex: 1;
+    }
+
+    .meeting-details h3 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+      color: #1e3c72;
+    }
+
+    .detail-line {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 6px 0;
+      font-size: 15px;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    .detail-line .dicon {
+      width: 20px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .detail-line b { color: #444; margin-right: 4px; }
+
+    /* Fade-in animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* small responsive tweak */
+    @media (max-width: 600px) {
+      .meeting { flex-direction: column; align-items: stretch; }
+      .icon { width: 100%; font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Upcoming Meetings</h1>
+  </header>
+
+  <div class="container" id="upcomingList">
+    <!-- Upcoming meetings will load here -->
+  </div>
+
+  <script>
+    // Redirect to login if not logged in
+    if (!localStorage.getItem("loggedInUser")) {
+      window.location.href = "index.html";
+    }
+
+    // Sample upcoming meetings
+    const upcomingMeetings = [
+      {
+        id: 1,
+        title: "Design Review",
+        agenda: "Review UI/UX of new features",
+        date: "2025-09-28",
+        time: "10:00 AM",
+        participants: ["Alice", "Bob", "Charlie"]
+      },
+      {
+        id: 2,
+        title: "Sprint Planning",
+        agenda: "Plan tasks for next sprint",
+        date: "2025-09-30",
+        time: "02:00 PM",
+        participants: ["Alice", "David", "Eve"]
+      },
+      {
+        id: 3,
+        title: "Client Presentation",
+        agenda: "Present new module to client",
+        date: "2025-10-02",
+        time: "11:00 AM",
+        participants: ["Alice", "Bob"]
+      }
+    ];
+
+    const container = document.getElementById("upcomingList");
+
+    upcomingMeetings.forEach(meeting => {
+      const div = document.createElement("div");
+      div.classList.add("meeting");
+
+      const icon = document.createElement("div");
+      icon.classList.add("icon");
+      icon.textContent = "📅"; // calendar icon
+
+      const details = document.createElement("div");
+      details.classList.add("meeting-details");
+
+      // build detail HTML with small icons for readability
+      details.innerHTML = `
+        <h3>${meeting.title}</h3>
+        <div class="detail-line"><span class="dicon">📝</span><div><b>Agenda:</b> ${meeting.agenda}</div></div>
+        <div class="detail-line"><span class="dicon">⏰</span><div><b>Date:</b> ${meeting.date} at ${meeting.time}</div></div>
+        <div class="detail-line"><span class="dicon">👥</span><div><b>Participants:</b> ${meeting.participants.join(", ")}</div></div>
+      `;
+
+      div.appendChild(icon);
+      div.appendChild(details);
+
+      // do NOT redirect on click (non-clickable)
+      container.appendChild(div);
+    });
+  </script>
+</body>
+</html>

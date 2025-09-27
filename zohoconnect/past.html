@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Past Meetings</title>
+  <style>
+    /* Modern gradient background & font */
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    /* Header with gradient */
+    header {
+      background: linear-gradient(90deg, #1e3c72, #2a5298);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* Meeting cards */
+    .meeting {
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 20px;
+      background: white;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+      animation: fadeIn 0.6s ease-in-out;
+      position: relative;
+    }
+
+    .meeting:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    /* Status icon */
+    .status-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    /* Attended/missed (unchanged) */
+    .attended {
+      border: 2px solid #43a047;
+      color: #43a047;
+    }
+
+    .missed {
+      border: 2px solid #e53935;
+      color: #e53935;
+      cursor: default;
+    }
+
+    /* Meeting details */
+    .meeting-details h3 {
+      margin: 0 0 10px 0;
+      font-size: 20px;
+      color: #1e3c72;
+    }
+
+    .meeting-details p {
+      margin: 6px 0;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .meeting-details b {
+      color: #444;
+    }
+
+    /* Fade-in animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Past Meetings</h1>
+  </header>
+
+  <div class="container" id="meetingsList">
+    <!-- Meetings will load here -->
+  </div>
+
+  <script>
+    // Redirect to login if not logged in
+    if(!localStorage.getItem("loggedInUser")){
+      window.location.href = "index.html";
+    }
+
+    // Sample past meetings with summary
+    const pastMeetings = [
+      {
+        id: 1,
+        title: "Project Kickoff",
+        agenda: "Initial discussion on project roadmap",
+        date: "2025-09-15",
+        time: "10:00 AM",
+        participants: ["Alice", "Bob", "Charlie"],
+        status: "attended",
+        notes: "Discussed milestones, deadlines, and assigned initial tasks.",
+        summary: "Decided on Q4 targets, allocated team responsibilities, and confirmed next sync date."
+      },
+      {
+        id: 2,
+        title: "Client Review",
+        agenda: "Review client feedback on prototype",
+        date: "2025-09-18",
+        time: "03:00 PM",
+        participants: ["Alice", "David"],
+        status: "missed",
+        notes: "Meeting was missed by the presenter. Will reschedule."
+      },
+      {
+        id: 3,
+        title: "Weekly Sync",
+        agenda: "Team progress updates",
+        date: "2025-09-20",
+        time: "11:00 AM",
+        participants: ["Alice", "Bob", "Eve"],
+        status: "attended",
+        notes: "Reviewed progress, blockers, and next week’s tasks.",
+        summary: "Team completed sprint tasks on time, discussed blockers for the new API, and aligned on release date."
+      }
+    ];
+
+    const list = document.getElementById("meetingsList");
+
+    pastMeetings.forEach(meeting => {
+      const div = document.createElement("div");
+      div.classList.add("meeting", meeting.status === "attended" ? "attended" : "missed");
+
+      const icon = document.createElement("div");
+      icon.classList.add("status-icon");
+      icon.textContent = meeting.status === "attended" ? "✅" : "❌";
+
+      const details = document.createElement("div");
+      details.classList.add("meeting-details");
+      details.innerHTML = `
+        <h3>${meeting.title}</h3>
+        <p><b>Agenda:</b> ${meeting.agenda}</p>
+        <p><b>Date:</b> ${meeting.date} at ${meeting.time}</p>
+        <p><b>Participants:</b> ${meeting.participants.join(", ")}</p>
+        <p><b>Notes:</b> ${meeting.notes}</p>
+      `;
+
+      div.appendChild(icon);
+      div.appendChild(details);
+
+      // If attended, make it clickable to view full summary
+      if(meeting.status === "attended"){
+        div.addEventListener("click", () => {
+          localStorage.setItem("meetingSummary", JSON.stringify(meeting));
+          window.location.href = "meeting_summary.html";
+        });
+      }
+
+      list.appendChild(div);
+    });
+  </script>
+</body>
+</html>
